@@ -27,7 +27,6 @@ libhal_build_demos(
   tla2528_output_pin_demo
   tla2528_input_pin_demo
   tla2528_analog_input_demo
-  serial_commands_demo
 
   INCLUDES
   include
@@ -35,7 +34,6 @@ libhal_build_demos(
 SOURCES
     # platforms/micromod.cpp
     platforms/stm32f103c8.cpp
-    src/serial_commands.cpp
     src/color_sensor_opt4048.cpp
     src/mq4.cpp
     src/pressure_sensor_bme680.cpp
@@ -55,4 +53,5 @@ SOURCES
     #Template for linking libhal namespaces is "libhal::__device__"
     #replace "__device__" with the libhal device you wish to import
     #ex: to import from https://github.com/libhal/libhal-rmd the next line would be "libhal::rmd"
+    
 )
