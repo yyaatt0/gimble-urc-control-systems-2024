@@ -1,10 +1,10 @@
-#include <sk9822.hpp>
 #include <array>
 #include <libhal-util/steady_clock.hpp>
 #include <libhal/output_pin.hpp>
 #include <libhal/pointers.hpp>
 #include <libhal/steady_clock.hpp>
 #include <libhal/units.hpp>
+#include <sk9822.hpp>
 
 using namespace hal::literals;
 using namespace std::chrono_literals;
@@ -69,7 +69,7 @@ void sk9822::update(light_strip_view lights)
 
 void sk9822::send_byte(hal::byte data)
 {
-  for (int i = 0; i < 8; i++) {
+  for (int i = 7; i >= 0; --i) {
     if (data & (1 << i)) {
       (*data_pin).level(true);
     } else {
