@@ -25,29 +25,32 @@ void application()
   hal::delay(*clock, 1ms);
   display.power(true);
 
-  constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
-  constexpr int buffer_size = 256;
-  std::array<hal::byte, buffer_size> printMessage;
+  // constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
+  // constexpr int buffer_size = 256;
+  // std::array<hal::byte, buffer_size> printMessage;
 
+  // display.display_message("hello world!");
+  /*
   // Demo Printf capabilities
-  std::snprintf(reinterpret_cast<char*>(printMessage.begin()),
+  std::snprintf(reinterpret_cast<char*>(&*printMessage.begin()),
                 printMessage.size(),
-                demoPrintFMessage.begin(),
+                &*demoPrintFMessage.begin(),
                 31,
                 31,
                 31.31f);
 
   display.display_message(demoPrintFMessage);
   hal::print(*console,
-             std::string_view(reinterpret_cast<char*>(printMessage.begin()),
+             std::string_view(reinterpret_cast<char*>(&*printMessage.begin()),
                               printMessage.size()));
 
   // String Input From Serial
   while (true) {
     printMessage = hal::read<buffer_size>(*console, hal::never_timeout());
     display.display_message(std::string_view(
-      reinterpret_cast<char*>(printMessage.begin()), printMessage.size()));
+      reinterpret_cast<char*>(&*printMessage.begin()), printMessage.size()));
     hal::print(*console, printMessage);
   }
+  */
 }
 }  // namespace sjsu::drivers
