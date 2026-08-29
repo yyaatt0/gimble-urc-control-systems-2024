@@ -20,16 +20,24 @@ void application()
   auto clock = resources::clock();
   auto console = resources::console();
   auto i2c = resources::i2c();
-  auto display = nhd0420d3z(*i2c);
+  auto display = nhd0420d3z(*i2c, 0x28);
 
   hal::delay(*clock, 1ms);
   display.power(true);
-
-  // constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
+// constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
   // constexpr int buffer_size = 256;
   // std::array<hal::byte, buffer_size> printMessage;
 
-  // display.display_message("hello world!");
+  display.write_char('a');
+  hal::delay(*clock, 100ms);
+  display.write_char('7');
+  hal::delay(*clock, 100ms);
+  display.write_char('b');
+  hal::delay(*clock, 100ms);
+  display.write_char('8');
+  hal::delay(*clock, 100ms);
+  display.write_char('c');
+  hal::delay(*clock, 100ms);
   /*
   // Demo Printf capabilities
   std::snprintf(reinterpret_cast<char*>(&*printMessage.begin()),

@@ -29,6 +29,48 @@ enum commands : hal::byte
 }
 
 namespace sjsu::drivers {
+void nhd0420d3z::send_data(hal::byte p_data)
+{
+  std::array<hal::byte, 1> command = { p_data };
+  hal::write(m_i2c_bus, m_i2c_address, command);
+}
+void nhd0420d3z::send_prefix()
+{
+  send_data(commands::prefix);
+}
+
+void nhd0420d3z::advance_cursor_right()
+{
+  m_cursor_column++;
+  if (m_cursor_column >= display_columns - 1) {
+    m_cursor_line++;
+    m_cursor_column = 0;
+  }
+  if (m_cursor_line >= display_lines - 1) {
+    m_cursor_line = 0;
+  }
+}
+void nhd0420d3z::write_char(char p_c)
+{
+  bool is_custom_char = p_c >= 0x00 && p_c < 0x07;
+  if (is_custom_char) {
+    // display custom_character behavior, unused
+  }
+
+  bool is_ascii = p_c >= 0x20 && p_c <= 0x7F;
+  if (is_ascii) {
+    // display standard ASCII characters
+    send_data(p_c);
+    advance_cursor_right();
+  }
+
+  bool is_japanese_char = p_c >= 0xA0 && p_c <= 0xFD;
+  if (is_japanese_char) {
+    // display japanese characters, factory-masked on the SPLC780D controller,
+    // unused
+  }
+}
+
 hal::byte nhd0420d3z::coordinates_to_position(hal::byte p_line,
                                               hal::byte p_column)
 {
@@ -39,24 +81,10 @@ hal::byte nhd0420d3z::coordinates_to_position(hal::byte p_line,
   }
   return pos;
 }
-void nhd0420d3z::send_data(hal::byte p_data)
-{
-  std::array<hal::byte, 1> command = { p_data };
-  hal::write(m_i2c_bus, m_i2c_address, command);
-}
-void nhd0420d3z::send_prefix()
-{
-  send_data(commands::prefix);
-}
-void nhd0420d3z::write_char(char p_c)
-{
-  send_prefix();
-  send_data(p_c);
-}
 void nhd0420d3z::set_cursor_position(hal::byte p_line, hal::byte p_column)
 {
   send_prefix();
-  send_data(set_cursor);
+  send_data(commands::set_cursor);
   send_data(coordinates_to_position(p_line, p_column));
   m_cursor_line = p_line;
   m_cursor_column = p_column;
@@ -96,7 +124,8 @@ void nhd0420d3z::display_message(std::string_view p_str)
   auto strIt = p_str.begin();
   while (m_cursor_line < display_lines && strIt != p_str.end()) {
     if (*strIt == '\n') {
-      set_cursor_position(0, m_cursor_column + 1);
+      m_cursor_line++;
+      set_cursor_position(m_cursor_line, 0);
     } else {
       write_char(*strIt);
     }

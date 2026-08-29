@@ -33,8 +33,8 @@ public:
    * @brief Turns the display on or off.
    *
    * The display contents are preserved in DDRAM when off and reappear when
-   * turned back on. Default state after power-up is on. 
-   * 
+   * turned back on. Default state after power-up is on.
+   *
    * Execution time: 100 us.
    *
    * @param p_on set to true to turn the display on, false to turn it off.
@@ -108,6 +108,13 @@ private:
   constexpr static hal::byte display_lines = 4;
   constexpr static hal::byte display_columns = 20;
   constexpr static hal::byte default_i2c_address = 0x28;
+
+  /**
+   * @brief moves the in-memory cursor tracker right, wrapping to the next line
+   * or to when reaching the end of a line, and returning automatically to home
+   * if reached the end of the last line.
+   */
+  void advance_cursor_right();
 
   /**
    * @brief Converts a (line, column) coordinate to a DDRAM address byte.
