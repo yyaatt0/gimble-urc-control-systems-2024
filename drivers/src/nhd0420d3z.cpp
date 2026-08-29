@@ -32,7 +32,8 @@ namespace sjsu::drivers {
 void nhd0420d3z::send_data(hal::byte p_data)
 {
   std::array<hal::byte, 1> command = { p_data };
-  hal::write(m_i2c_bus, m_i2c_address, command);
+  std::span<hal::byte> data_out {};
+  m_i2c_bus.transaction(m_i2c_address, data_out, command);
 }
 void nhd0420d3z::send_prefix()
 {

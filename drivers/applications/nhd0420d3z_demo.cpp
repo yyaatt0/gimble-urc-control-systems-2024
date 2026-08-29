@@ -16,17 +16,30 @@ namespace sjsu::drivers {
 
 void application()
 {
-
   auto clock = resources::clock();
   auto console = resources::console();
+  auto led = resources::status_led();
+
   auto i2c = resources::i2c();
   auto display = nhd0420d3z(*i2c, 0x28);
 
   hal::delay(*clock, 1ms);
   display.power(true);
+  hal::delay(*clock, 1ms);
+
+  bool state = false;
+  while (true) {
+    led->level(state);
+    state = !state;
+    hal::delay(*clock, 250ms);
+  }
+
 // constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
   // constexpr int buffer_size = 256;
   // std::array<hal::byte, buffer_size> printMessage;
+
+  display.clear_screen();
+  display.set_cursor_position(0, 0);
 
   display.write_char('a');
   hal::delay(*clock, 100ms);
@@ -38,6 +51,7 @@ void application()
   hal::delay(*clock, 100ms);
   display.write_char('c');
   hal::delay(*clock, 100ms);
+
   /*
   // Demo Printf capabilities
   std::snprintf(reinterpret_cast<char*>(&*printMessage.begin()),
