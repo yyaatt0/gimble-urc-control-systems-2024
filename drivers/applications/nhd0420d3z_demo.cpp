@@ -6,7 +6,7 @@
 #include <libhal/pointers.hpp>
 #include <libhal/timeout.hpp>
 #include <libhal/units.hpp>
-#include <nhd0420d3z.hpp>
+// #include <nhd0420d3z.hpp>
 #include <resource_list.hpp>
 #include <string_view>
 
@@ -16,17 +16,26 @@ namespace sjsu::drivers {
 
 void application()
 {
-  auto clock = resources::clock();
-  auto console = resources::console();
   auto led = resources::status_led();
+  auto clock = resources::clock();
+
+  // auto console = resources::console();
 
   auto i2c = resources::i2c();
-  auto display = nhd0420d3z(*i2c, 0x28);
+  // auto display = nhd0420d3z(*i2c);
+
 
   hal::delay(*clock, 1ms);
-  display.power(true);
-  hal::delay(*clock, 1ms);
+  std::array<hal::byte, 1> data_in = { };
+  std::span<hal::byte> data_out { 0xFE, 0x41 };
 
+  while (true) {
+    try {
+      i2c->transaction(0x28, data_out, data_in);
+    } catch (hal::no_such_device err) {
+      hal::delay(*clock, 10ms);
+    }
+  }
   bool state = false;
   while (true) {
     led->level(state);
@@ -34,10 +43,13 @@ void application()
     hal::delay(*clock, 250ms);
   }
 
-// constexpr std::string_view demoPrintFMessage = "d[%d]\nx[%x]\nf[%f]";
-  // constexpr int buffer_size = 256;
-  // std::array<hal::byte, buffer_size> printMessage;
+  /*
+  hal::delay(*clock, 1ms);
+  data_in[0] = 0x41;
+  i2c->transaction(0x28, data_out, data_in);
+  */
 
+  /*
   display.clear_screen();
   display.set_cursor_position(0, 0);
 
@@ -51,28 +63,6 @@ void application()
   hal::delay(*clock, 100ms);
   display.write_char('c');
   hal::delay(*clock, 100ms);
-
-  /*
-  // Demo Printf capabilities
-  std::snprintf(reinterpret_cast<char*>(&*printMessage.begin()),
-                printMessage.size(),
-                &*demoPrintFMessage.begin(),
-                31,
-                31,
-                31.31f);
-
-  display.display_message(demoPrintFMessage);
-  hal::print(*console,
-             std::string_view(reinterpret_cast<char*>(&*printMessage.begin()),
-                              printMessage.size()));
-
-  // String Input From Serial
-  while (true) {
-    printMessage = hal::read<buffer_size>(*console, hal::never_timeout());
-    display.display_message(std::string_view(
-      reinterpret_cast<char*>(&*printMessage.begin()), printMessage.size()));
-    hal::print(*console, printMessage);
-  }
   */
 }
 }  // namespace sjsu::drivers

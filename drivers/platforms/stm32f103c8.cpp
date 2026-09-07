@@ -123,7 +123,11 @@ hal::v5::strong_ptr<hal::i2c> i2c()
                                                        .sda = &sda_output_pin,
                                                        .scl = &scl_output_pin,
                                                      },
-                                                     *clock);
+                                                     *clock,
+                                                     0.5f,
+                                                     hal::i2c::settings{
+                                                       .clock_rate = 10.0_kHz
+                                                     });
 }
 
 hal::v5::strong_ptr<hal::input_pin> input_pin_0()
