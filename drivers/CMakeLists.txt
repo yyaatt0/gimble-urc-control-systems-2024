@@ -27,13 +27,11 @@ DEMOS
   perseus_demo
   perseus_serial_demo
   pressure_sensor_demo
-  serial_commands_demo
   scd40_demo
   soil_sensor_demo
   tla2528_analog_input_demo
   serial_commands_demo
   nhd0420d3z_demo
-  adc1283_demo
 
 INCLUDES
   include
